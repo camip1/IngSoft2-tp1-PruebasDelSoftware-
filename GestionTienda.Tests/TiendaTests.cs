@@ -5,9 +5,19 @@ namespace GestionTienda.Tests;
 
 public class ProductoTests
 {
-    [Fact] //etiqueta y atributo de C#: le indica al ejecutor de xUnit que se trata de una prueba que debe ejecutar de forma independiente
-    public void CrearProducto_AsignaAtributosCorrectamente()
+    [Fact] 
+    public void AgregarProducto_ProductoSeAgregaAlInventario()
     {
-        //
+        // Arrange
+        Tienda tienda = new Tienda();
+        Producto producto = new Producto("Notebook", 500000, "Tecnologia");
+
+        // Act
+        tienda.AgregarProducto(producto);
+
+        // Assert
+        Assert.Contains(producto, tienda.Inventario);
     }
+
+    
 }

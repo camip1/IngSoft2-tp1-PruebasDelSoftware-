@@ -2,6 +2,8 @@
 
 ## “Sistema de Gestión de Productos en una Tienda”
 
+**Baigorria Camila Virginia, Mariano Julieta, Perez Milagros Camila**
+
 **Lenguaje de programacion elegido: C#**
 **Framework elegido: xUnit**
 

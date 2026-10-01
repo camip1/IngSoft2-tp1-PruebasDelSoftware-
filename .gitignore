@@ -94,7 +94,6 @@ StyleCopReport.xml
 *.tlh
 *.tmp
 *.tmp_proj
-*_wpftmp.csproj
 *.log
 *.tlog
 *.vspscc
@@ -482,7 +481,4 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
-
-*.sln
 *.vscode
-*.csproj

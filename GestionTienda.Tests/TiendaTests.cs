@@ -1,4 +1,5 @@
 ﻿using Xunit;
+using Moq;
 using GestionTienda;
 
 namespace GestionTienda.Tests;
@@ -95,8 +96,7 @@ public class ProductoTests
         var producto = new Producto("Teclado", 35000, "Tecnología");
 
         // Act & Assert: Verifica que al pasar un precio negativo se lance la excepción correspondiente 
-        var excepcion = Assert.Throws<ArgumentOutOfRangeException>(() => producto.ActualizarPrecio(-500));
-        
+        Assert.Throws<ArgumentOutOfRangeException>(() => producto.ActualizarPrecio(-500));  
     }
 
     [Fact]
@@ -119,5 +119,30 @@ public class ProductoTests
 
         // Act & Assert
         Assert.Throws<KeyNotFoundException>(() => tienda.BuscarProducto("Impresora"));
+    }
+
+    //PUNTO 3
+    [Fact]
+    public void AplicarDescuento_CalculaCorrectamenteYActualizaPrecio()
+    {
+        // Arrange
+        var tienda = new Tienda();
+        
+        var mockProducto = new Mock<Producto>(
+            "Notebook",
+            100000m,
+            "Tecnología"
+        );
+        
+        tienda.Inventario.Add(mockProducto.Object);
+        
+        // Act
+        tienda.AplicarDescuento("Notebook", 20);
+        
+        // Assert
+        mockProducto.Verify(
+            p => p.ActualizarPrecio(80000m),
+            Times.Once
+        );
     }
 }

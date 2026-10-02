@@ -28,4 +28,13 @@ public class Tienda
         Producto producto = BuscarProducto(nombre); //Al utilizar el metodo BuscarProducto, si no encuentra el producto se lanza la excepción
         Inventario.Remove(producto);
     }
+
+    public void AplicarDescuento(string nombre, decimal porcentaje)
+    {
+        Producto producto = BuscarProducto(nombre);
+
+        decimal nuevoPrecio = producto.Precio * (1 - porcentaje / 100);
+        
+        producto.ActualizarPrecio(nuevoPrecio);
+    }
 }

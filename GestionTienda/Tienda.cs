@@ -13,19 +13,28 @@ public class Tienda
         Inventario.Add(producto);
     }
 
-    public Producto? BuscarProducto(string nombre)
+    public Producto BuscarProducto(string nombre)
     {
-        return Inventario.FirstOrDefault(p => p.Nombre == nombre);
+        var producto = Inventario.FirstOrDefault(p => p.Nombre == nombre);
+        if(producto == null)
+        {
+            throw new KeyNotFoundException($"El producto '{nombre}' no se encuentra en el inventario.");
+        }
+        return producto;
     }
 
-    public bool EliminarProducto(string nombre)
+    public void EliminarProducto(string nombre)
     {
-        Producto? producto = BuscarProducto(nombre);
-        if (producto != null)
-        {
-            Inventario.Remove(producto);
-            return true;
-        }
-        return false;
+        Producto producto = BuscarProducto(nombre); //Al utilizar el metodo BuscarProducto, si no encuentra el producto se lanza la excepción
+        Inventario.Remove(producto);
+    }
+
+    public void AplicarDescuento(string nombre, decimal porcentaje)
+    {
+        Producto producto = BuscarProducto(nombre);
+
+        decimal nuevoPrecio = producto.Precio * (1 - porcentaje / 100);
+        
+        producto.ActualizarPrecio(nuevoPrecio);
     }
 }

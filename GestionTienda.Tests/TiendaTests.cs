@@ -57,10 +57,11 @@ public class ProductoTests
         tienda.AgregarProducto(producto);
 
         // Act
-        bool resultado = tienda.EliminarProducto("Notebook");
+        //bool resultado = tienda.EliminarProducto("Notebook");
+        tienda.EliminarProducto("Notebook");
 
         // Assert
-        Assert.True(resultado);
+        //Assert.True(resultado);
         Assert.DoesNotContain(producto, tienda.Inventario);
     }
 
@@ -69,11 +70,13 @@ public class ProductoTests
     {
         // Arrange
         Tienda tienda = new Tienda();
+        // Producto producto = new Producto("Notebook", 500000, "Tecnología");
+        // tienda.AgregarProducto(producto);
 
         // Act
-        bool resultado = tienda.EliminarProducto("Notebook");
-
+        //bool resultado = tienda.EliminarProducto("Notebook");
         // Assert
-        Assert.False(resultado);
+        //Assert.False(resultado);
+        Assert.Throws<KeyNotFoundException>(() => tienda.EliminarProducto("Notebook"));
     }
 }

@@ -7,7 +7,7 @@ using Newtonsoft.Json.Bson;
 
 namespace GestionTienda.Tests;
 
-public class ProductoTests : IDisposable
+public class TiendaTests : IDisposable
 {
 
     //PUNTO 4
@@ -19,7 +19,7 @@ public class ProductoTests : IDisposable
     public Producto ProductoMonitor { get; private set; }
     public Producto ProductoAuriculares { get; private set; }
     // SETUP: El constructor se ejecuta antes de CADA prueba individual
-    public ProductoTests()
+    public TiendaTests()
     {
         TiendaCompartida = new Tienda();
 

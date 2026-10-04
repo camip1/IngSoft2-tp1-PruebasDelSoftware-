@@ -6,33 +6,55 @@ using GestionTienda;
 
 namespace GestionTienda.Tests;
 
-public class ProductoTests
+public class ProductoTests : IDisposable
 {
+    public Tienda TiendaCompartida { get; private set; }
+    public Producto ProductoNotebook { get; private set; }
+    public Producto ProductoMouse { get; private set; }
+
+    // SETUP: El constructor se ejecuta antes de CADA prueba individual
+    public ProductoTests()
+    {
+        TiendaCompartida = new Tienda();
+
+        ProductoNotebook = new Producto("Notebook", 500000m, "Tecnología");
+        ProductoMouse = new Producto("Mouse", 20000m, "Tecnología");
+
+        // Inicializamos la tienda con los productos predefinidos
+        TiendaCompartida.AgregarProducto(ProductoNotebook);
+        TiendaCompartida.AgregarProducto(ProductoMouse);
+    }
+
+    // TEARDOWN: Limpieza de estado al finalizar cada prueba
+    public void Dispose()
+    {
+        TiendaCompartida.Inventario.Clear();
+    }
+
     // PUNTO 1
     [Fact] 
     public void AgregarProducto_ProductoSeAgregaAlInventario()
     {
         // Arrange
-        Tienda tienda = new Tienda();
-        Producto producto = new Producto("Notebook", 500000, "Tecnologia");
-
+        Producto nuevoProducto = new Producto("Teclado", 35000m, "Tecnología");
+        
         // Act
-        tienda.AgregarProducto(producto);
+        TiendaCompartida.AgregarProducto(nuevoProducto);
 
         // Assert
-        Assert.Contains(producto, tienda.Inventario);
+        Assert.Contains(nuevoProducto, TiendaCompartida.Inventario);
     }
 
     [Fact]
     public void BuscarProducto_ProductoExiste_DevuelveProducto()
     {
         // Arrange
-        Tienda tienda = new Tienda();
-        Producto producto = new Producto("Notebook", 500000, "Tecnología");
-        tienda.AgregarProducto(producto);
+        // Tienda tienda = new Tienda();
+        // Producto producto = new Producto("Notebook", 500000m, "Tecnología");
+        // tienda.AgregarProducto(producto);
 
         // Act
-        Producto? resultado = tienda.BuscarProducto("Notebook");
+        Producto resultado = TiendaCompartida.BuscarProducto("Notebook");
 
         // Assert
         Assert.NotNull(resultado);
@@ -61,33 +83,17 @@ public class ProductoTests
     public void EliminarProducto_ProductoExiste_SeEliminaDelInventario()
     {
         // Arrange
-        Tienda tienda = new Tienda();
-        Producto producto = new Producto("Notebook", 500000, "Tecnología");
-        tienda.AgregarProducto(producto);
-
-        // Act
-        //bool resultado = tienda.EliminarProducto("Notebook");
-        tienda.EliminarProducto("Notebook");
-
-        // Assert
-        //Assert.True(resultado);
-        Assert.DoesNotContain(producto, tienda.Inventario);
-    }
-
-    [Fact]
-    public void EliminarProducto_ProductoNoExiste_DevuelveFalse()
-    {
-        // Arrange
-        Tienda tienda = new Tienda();
-        // Producto producto = new Producto("Notebook", 500000, "Tecnología");
+        // Tienda tienda = new Tienda();
+        // Producto producto = new Producto("Notebook", 500000m, "Tecnología");
         // tienda.AgregarProducto(producto);
 
         // Act
         //bool resultado = tienda.EliminarProducto("Notebook");
-    
+        TiendaCompartida.EliminarProducto("Notebook");
+
         // Assert
-        //Assert.False(resultado);  Se modificó el método de tipo bool a void por el uso de excepciones
-        Assert.Throws<KeyNotFoundException>(() => tienda.EliminarProducto("Notebook"));
+        //Assert.True(resultado);
+        Assert.DoesNotContain(ProductoNotebook, TiendaCompartida.Inventario);
     }
 
     //PUNTO 2
@@ -95,32 +101,32 @@ public class ProductoTests
     public void ActualizarPrecio_PrecioNegativo_LanzaArgumentOutOfRangeException()
     {
         // Arrange
-        var producto = new Producto("Teclado", 35000, "Tecnología");
+        // var producto = new Producto("Teclado", 35000m, "Tecnología");
 
         // Act & Assert: Verifica que al pasar un precio negativo se lance la excepción correspondiente 
-        Assert.Throws<ArgumentOutOfRangeException>(() => producto.ActualizarPrecio(-500));  
+        Assert.Throws<ArgumentOutOfRangeException>(() => ProductoNotebook.ActualizarPrecio(-500m));  
     }
 
     [Fact]
     public void EliminarProducto_ProductoInexistente_LanzaKeyNotFoundException()
     {
         // Arrange
-        var tienda = new Tienda();
-        var producto = new Producto("Mouse", 20000, "Tecnología");
-        tienda.AgregarProducto(producto);
+        // var tienda = new Tienda();
+        // var producto = new Producto("Mouse", 20000m, "Tecnología");
+        // tienda.AgregarProducto(producto);
 
         // Act & Assert: Verifica que al intentar eliminar un producto que no está en el inventario se lance KeyNotFoundException
-        Assert.Throws<KeyNotFoundException>(() => tienda.EliminarProducto("ProductoInexistente"));
+        Assert.Throws<KeyNotFoundException>(() => TiendaCompartida.EliminarProducto("ProductoInexistente"));
     }
 
     [Fact]
     public void BuscarProducto_ProductoInexistente_LanzaKeyNotFoundException()
     {
         // Arrange
-        var tienda = new Tienda();
+        // var tienda = new Tienda();
 
         // Act & Assert
-        Assert.Throws<KeyNotFoundException>(() => tienda.BuscarProducto("Impresora"));
+        Assert.Throws<KeyNotFoundException>(() => TiendaCompartida.BuscarProducto("ImpresoraInexistente"));
     }
 
     //PUNTO 3
@@ -128,8 +134,7 @@ public class ProductoTests
     public void AplicarDescuento_CalculaCorrectamenteYActualizaPrecio()
     {
         // Arrange
-        var tienda = new Tienda();
-        
+        var tienda = new Tienda(); // Mocks: usamos una tienda limpia o mockeamos el producto
         var mockProducto = new Mock<Producto>(
             "Notebook",
             100000m,
@@ -139,71 +144,12 @@ public class ProductoTests
         tienda.Inventario.Add(mockProducto.Object);
         
         // Act
-        tienda.AplicarDescuento("Notebook", 20);
+        tienda.AplicarDescuento("Notebook", 20m);
         
         // Assert
         mockProducto.Verify(
             p => p.ActualizarPrecio(80000m),
             Times.Once
         );
-    }
-}
-
-public class TiendaFixtureTests : IDisposable
-{
-    public Tienda TiendaCompartida { get; private set; }
-    public Producto ProductoNotebook { get; private set; }
-    public Producto ProductoMouse { get; private set; }
-
-    // SETUP: El constructor se ejecuta antes de CADA prueba individual
-    public TiendaFixtureTests()
-    {
-        TiendaCompartida = new Tienda();
-
-        ProductoNotebook = new Producto("Notebook", 500000m, "Tecnología");
-        ProductoMouse = new Producto("Mouse", 20000m, "Tecnología");
-
-        // Inicializamos la tienda con los productos predefinidos
-        TiendaCompartida.AgregarProducto(ProductoNotebook);
-        TiendaCompartida.AgregarProducto(ProductoMouse);
-    }
-
-    // TEARDOWN: Limpieza de estado al finalizar cada prueba
-    public void Dispose()
-    {
-        TiendaCompartida.Inventario.Clear();
-    }
-
-    [Fact]
-    public void AgregarProducto_UsandoFixture_SeAgregaCorrectamente()
-    {
-        // Arrange: El fixture ya cuenta con 2 productos cargados
-        var nuevoProducto = new Producto("Teclado", 35000m, "Tecnología");
-
-        // Act
-        TiendaCompartida.AgregarProducto(nuevoProducto);
-
-        // Assert
-        Assert.Equal(3, TiendaCompartida.Inventario.Count);
-        Assert.Contains(nuevoProducto, TiendaCompartida.Inventario);
-    }
-
-    [Fact]
-    public void BuscarProducto_ProductoExistenteEnFixture_DevuelveProducto()
-    {
-        // Act: Busca uno de los productos precargados por el fixture
-        Producto? resultado = TiendaCompartida.BuscarProducto("Notebook");
-
-        // Assert
-        Assert.NotNull(resultado);
-        Assert.Equal("Notebook", resultado.Nombre);
-        Assert.Equal(500000m, resultado.Precio);
-    }
-
-    [Fact]
-    public void BuscarProducto_ProductoInexistenteEnFixture_LanzaKeyNotFoundException()
-    {
-        // Act & Assert: Verifica que lance excepción al buscar algo que no está en el fixture
-        Assert.Throws<KeyNotFoundException>(() => TiendaCompartida.BuscarProducto("Monitor"));
     }
 }

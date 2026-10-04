@@ -31,6 +31,10 @@ public class Tienda
 
     public void AplicarDescuento(string nombre, decimal porcentaje)
     {
+        if (porcentaje < 0 || porcentaje > 100)
+        {
+            throw new ArgumentOutOfRangeException(nameof(porcentaje), "El porcentaje de descuento debe estar entre 0 y 100.");
+        }
         Producto producto = BuscarProducto(nombre);
 
         decimal nuevoPrecio = producto.Precio * (1 - porcentaje / 100);

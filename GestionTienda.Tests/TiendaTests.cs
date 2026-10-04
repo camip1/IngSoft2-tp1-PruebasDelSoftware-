@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using Xunit;
 using Moq;
 using GestionTienda;
+using Newtonsoft.Json.Bson;
 
 namespace GestionTienda.Tests;
 
 public class ProductoTests : IDisposable
 {
+
+    //PUNTO 4
     public Tienda TiendaCompartida { get; private set; }
+// Productos del Fixture
     public Producto ProductoNotebook { get; private set; }
     public Producto ProductoMouse { get; private set; }
-
+    public Producto ProductoTeclado { get; private set; }
+    public Producto ProductoMonitor { get; private set; }
+    public Producto ProductoAuriculares { get; private set; }
     // SETUP: El constructor se ejecuta antes de CADA prueba individual
     public ProductoTests()
     {
@@ -19,10 +25,15 @@ public class ProductoTests : IDisposable
 
         ProductoNotebook = new Producto("Notebook", 500000m, "Tecnología");
         ProductoMouse = new Producto("Mouse", 20000m, "Tecnología");
-
+        ProductoTeclado = new Producto("Teclado", 35000m, "Tecnología");
+        ProductoMonitor = new Producto("Monitor", 180000m, "Tecnología");
+        ProductoAuriculares = new Producto("Auriculares", 45000m, "Audio");
         // Inicializamos la tienda con los productos predefinidos
         TiendaCompartida.AgregarProducto(ProductoNotebook);
         TiendaCompartida.AgregarProducto(ProductoMouse);
+        TiendaCompartida.AgregarProducto(ProductoTeclado);
+        TiendaCompartida.AgregarProducto(ProductoMonitor);
+        TiendaCompartida.AgregarProducto(ProductoAuriculares);
     }
 
     // TEARDOWN: Limpieza de estado al finalizar cada prueba
@@ -126,7 +137,7 @@ public class ProductoTests : IDisposable
         // var tienda = new Tienda();
 
         // Act & Assert
-        Assert.Throws<KeyNotFoundException>(() => TiendaCompartida.BuscarProducto("ImpresoraInexistente"));
+        Assert.Throws<KeyNotFoundException>(() => TiendaCompartida.BuscarProducto("ProductoInexistente"));
     }
 
     //PUNTO 3
@@ -151,5 +162,69 @@ public class ProductoTests : IDisposable
             p => p.ActualizarPrecio(80000m),
             Times.Once
         );
+    }
+
+    //PUNTO 5: pruebas de integración
+    [Fact]
+    public void CalcularTotalCarrito_FlujoCompletoConDescuentos_DevuelveTotalCorrecto()
+    {
+        // Arrange
+        // Aplicamos 10% de descuento a la Notebook ($500.000 -> $450.000)
+        TiendaCompartida.AplicarDescuento("Notebook", 10m);
+
+        // Aplicamos 20% de descuento al Monitor ($180.000 -> $144.000)
+        TiendaCompartida.AplicarDescuento("Monitor", 20m);
+
+        // Armamos un carrito variado con 3 productos
+        var carrito = new List<string> { "Notebook", "Monitor", "Auriculares" };
+
+        // Act:
+        decimal totalCalculado = TiendaCompartida.calcular_total_carrito(carrito);
+
+        // Assert:
+        // $450.000 (Notebook) + $144.000 (Monitor) + $45.000 (Auriculares precio lista) = $639.000
+        decimal totalEsperado = 639000m;
+        Assert.Equal(totalEsperado, totalCalculado);
+    }
+
+    [Fact]
+    public void CalcularTotalCarrito_ProductoInexistenteEnCarrito_LanzaKeyNotFoundException()
+    {
+        // Arrange: Carrito con un producto válido y otro que no existe en el inventario
+        var carrito = new List<string> { "Mouse", "PlacaDeVideoInexistente" };
+
+        // Act & Assert: Debe integrar la validación de BuscarProducto y lanzar la excepción
+        Assert.Throws<KeyNotFoundException>(() => TiendaCompartida.calcular_total_carrito(carrito));
+    }
+
+    [Fact]
+    public void CalcularTotalCarrito_CarritoVacio_DevuelveCero()
+    {
+        // Arrange
+        var carritoVacio = new List<string>();
+
+        // Act
+        decimal total = TiendaCompartida.calcular_total_carrito(carritoVacio);
+
+        // Assert
+        Assert.Equal(0m, total);
+    }
+
+    [Fact]
+    public void CalcularTotalCarrito_ProductoRepetido_SumaAmbasUnidades()
+    {
+        // Arrange
+
+        var carrito = new List<string>
+        {
+            "Mouse",
+            "Mouse"
+        };
+
+        // Act 
+        decimal total = TiendaCompartida.calcular_total_carrito(carrito);
+
+        // Assert
+        Assert.Equal(40000m, total);
     }
 }

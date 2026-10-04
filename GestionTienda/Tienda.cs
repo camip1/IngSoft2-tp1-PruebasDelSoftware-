@@ -41,4 +41,16 @@ public class Tienda
         
         producto.ActualizarPrecio(nuevoPrecio);
     }
+
+    public decimal calcular_total_carrito(List<string> carrito)
+    {
+        decimal total = 0m;
+        foreach(var nombre in carrito)
+        {
+            // Si un producto no existe se lanza KeyNotFoundException
+            Producto producto = BuscarProducto(nombre);
+            total += producto.Precio;
+        }
+        return total;
+    }
 }

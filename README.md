@@ -52,7 +52,9 @@ vacía actúan como pruebas unitarias, ya que evalúan únicamente la lógica de
 Sí, se podrían haber escrito en primera instancia las pruebas. Esta es la base de TDD (Test-Driven Development o Desarrollo Guiado por Pruebas), donde primero se define qué se espera que haga el sistema escribiendo la prueba y luego se escribe o modifica el código de producción para resolverlo. 
 El proceso para escribir primero los tests consta de los siguientes pasos (ciclo Red-Green-Refactor):
 1. **Fase Roja (Red)**: Se arma el test que prueba la nueva funcionalidad (por ejemplo, que BuscarProducto lance una excepción si no encuentra el producto). Al correr dotnet test, la prueba falla o no compila porque la lógica aún no fue implementada.
-2.**Fase Verde (Green)**: Se modifica el código del proyecto (Tienda.cs) escribiendo lo estrictamente necesario para que la prueba pase (por ejemplo, agregar el if con el throw new KeyNotFoundException). Se vuelve a ejecutar el test y se comprueba que pasa a verde.
+
+2. **Fase Verde (Green)**: Se modifica el código del proyecto (Tienda.cs) escribiendo lo estrictamente necesario para que la prueba pase (por ejemplo, agregar el if con el throw new KeyNotFoundException). Se vuelve a ejecutar el test y se comprueba que pasa a verde.
+
 3. **Refactorización (Refactor)**: Con las pruebas pasando en verde, se emprolija el código, se limpian duplicaciones y se mejoran los nombres de las variables, etc.
 
 ### Punto 3:

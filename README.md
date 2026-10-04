@@ -4,8 +4,38 @@
 
 **Baigorria Camila Virginia, Mariano Julieta, Perez Milagros Camila**
 
-**Lenguaje de programacion elegido: C#**
-**Framework elegido: xUnit**
+# Trabajo Práctico: Pruebas de Software en C#
+
+Este repositorio contiene la solución completa para el Trabajo Práctico de Pruebas de Software, desarrollado en **C# (.NET)** utilizando el framework de pruebas **xUnit** y la librería de dobles de prueba **Moq**.
+
+---
+
+## Requisitos Previos
+
+Antes de ejecutar las pruebas, asegúrese de contar con los siguientes componentes instalados en su sistema:
+
+* .NET 8.0 SDK (o versión superior)
+* Git
+
+---
+
+## Instrucciones para clonar y ejecutar las pruebas
+
+1. **Clonar el repositorio:**
+   Abra una terminal y ejecute: `git clone <URL_DEL_REPOSITORIO>` y luego acceda con `cd <NOMBRE_DE_LA_CARPETA>`.
+
+2. **Restaurar dependencias:**
+   Restaure los paquetes NuGet requeridos ejecutando: `dotnet restore`.
+
+3. **Compilar la solución:**
+   Verifique que el proyecto y los tests compilen ejecutando: `dotnet build`.
+
+4. **Ejecutar las pruebas:**
+   Para correr la suite completa de pruebas ejecute: `dotnet test`.
+
+   Si desea ver el detalle de cada prueba ejecutada individualmente, utilice: `dotnet test --logger "console;verbosity=detailed"`.
+
+---
 
 Las partes clave de xUnit en nuestro código
 
